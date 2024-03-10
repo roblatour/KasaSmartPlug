@@ -213,7 +213,7 @@ int KASAUtil::ScanDevices(int timeoutMs)
                         relay_state = get_sysinfo["relay_state"];
                         model = get_sysinfo["model"];
 
-                        if (IsStartWith("HS",model))
+                        if (IsStartWith("HS",model) || IsStartWith("KP405",model))
                         {
                             // Limit the number of devices and make sure no duplicate device.
                             if (IsContainPlug(string_value) == -1)
