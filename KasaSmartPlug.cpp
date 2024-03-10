@@ -213,7 +213,7 @@ int KASAUtil::ScanDevices(int timeoutMs)
                         relay_state = get_sysinfo["relay_state"];
                         model = get_sysinfo["model"];
 
-                        if (!IsStartWith("HS",model) || !IsStartWith("KP405",model))
+                        if (!IsStartWith("HS",model) || !IsStartWith("KP",model))
                         {
                             Serial.println("Found a valid Kasa Device, but we don't know if it works with this library just yet. You are in unprecedented territory, proceed with caution.")    
                         }
