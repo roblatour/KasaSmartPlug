@@ -215,7 +215,7 @@ int KASAUtil::ScanDevices(int timeoutMs)
 
                         if (!IsStartWith("HS",model) || !IsStartWith("KP",model))
                         {
-                            Serial.println("Found a valid Kasa Device, but we don't know if it works with this library just yet. You are in unprecedented territory, proceed with caution.")    
+                            Serial.println("Found a valid Kasa Device, but we don't know if it works with this library just yet. You are in unprecedented territory, proceed with caution.");    
                         }
                         
                         // Limit the number of devices and make sure no duplicate device.
