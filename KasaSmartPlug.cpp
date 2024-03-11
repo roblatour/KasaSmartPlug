@@ -213,32 +213,35 @@ int KASAUtil::ScanDevices(int timeoutMs)
                         relay_state = get_sysinfo["relay_state"];
                         model = get_sysinfo["model"];
 
-                        if (IsStartWith("HS",model))
+                        if (!IsStartWith("HS",model) && !IsStartWith("KP",model))
                         {
-                            // Limit the number of devices and make sure no duplicate device.
-                            if (IsContainPlug(string_value) == -1)
+                            Serial.println("Found a valid Kasa Device, but we don't know if it works with this library just yet. You are in unprecedented territory, proceed with caution.");    
+                        }
+                        
+                        // Limit the number of devices and make sure no duplicate device.
+                        if (IsContainPlug(string_value) == -1)
+                        {
+                            // New device has been found
+                            if (deviceFound < MAX_PLUG_ALLOW)
                             {
-                                // New device has been found
-                                if (deviceFound < MAX_PLUG_ALLOW)
-                                {
-                                    ptr_plugs[deviceFound] = new KASASmartPlug(string_value, raddr_name);
-                                    ptr_plugs[deviceFound]->state = relay_state;
-                                    strcpy(ptr_plugs[deviceFound]->model, model);
-                                    deviceFound++;
-                                } else 
-                                {
-                                    Serial.printf("\r\n Error unable to add more plug");
-                                }
-                            }else 
+                                ptr_plugs[deviceFound] = new KASASmartPlug(string_value, raddr_name);
+                                ptr_plugs[deviceFound]->state = relay_state;
+                                strcpy(ptr_plugs[deviceFound]->model, model);
+                                deviceFound++;
+                            } else 
                             {
-                                //Plug is already in the collection then update IP Address..
-                                KASASmartPlug *plug = KASAUtil::GetSmartPlug(string_value);
-                                if(plug != NULL)
-                                {
-                                    plug->UpdateIPAddress(raddr_name);
-                                }
+                                Serial.printf("\r\n Error unable to add more plug");
+                            }
+                        }else 
+                        {
+                            //Plug is already in the collection then update IP Address..
+                            KASASmartPlug *plug = KASAUtil::GetSmartPlug(string_value);
+                            if(plug != NULL)
+                            {
+                                plug->UpdateIPAddress(raddr_name);
                             }
                         }
+                        
                     }
                 }
             }
