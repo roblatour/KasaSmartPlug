@@ -7,7 +7,7 @@
  
  This library is also released under the MIT License as well.
 
- This fork incrementatlly includes the ablitity to report 
+ This fork incrementatlly includes the ablitity to report:
  - on Kasa KS and KP devices
  - the Kasa device's MAC
  - to the Serial Output window
