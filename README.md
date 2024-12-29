@@ -12,7 +12,7 @@
  - the Kasa device's MAC Id
  - to the Serial Output window
 
- (*) this library has been tested with a Kasa KP400 device - which is a one unit with two plugs - accessable at on IP address and with on MAC id. This library will will report the (default) name of the unit, but not the two seperate plugs if they have been individually named via the Kasa Phone App.  Sadly, the Kasa Phone App appears not to allow you to change the units default name. In any case, this library will report the KP400's default name, model, IP address, MAC Id and will report its state as off even if one or both plugs are on.
+ (*) this library has been tested with a Kasa KP400 device - which is a one unit with two plugs - accessable at via one IP address and with on MAC id. This library will will report the (default) name of the unit, but not the name of two seperate plugs if they have been individually named via the Kasa Phone App.  Sadly, the Kasa Phone App appears not to allow you to change the unit's default name. In any case, this library will report the KP400's default name, model, IP address, MAC Id and will report its state as off even if one or both plugs are on.
  
  # Dependencies
  This library requires ArduinoJson by Benoit Blanchon. 
