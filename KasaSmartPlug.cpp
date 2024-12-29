@@ -1,7 +1,14 @@
-// KASASmartPlug library v0.1 9/2/2022
-// I got Covid 19 on 8/22/2022 and had to stay home.
-// I felt better after couple days of rest but still tested positive and
-// could not go to work. I feel bored so I started writing this library.
+/*
+
+Author of this fork: Rob Latour
+Copyright (c) 2024 Rob Latour
+https://github.com/roblatour/KasaSmartPlug
+
+Original Author: Kris Jearakul
+Copyright (c) 2022 Kris Jearakul
+https://github.com/kj831ca/KasaSmartPlug
+
+*/
 
 bool Kasa_Debug = false;
 

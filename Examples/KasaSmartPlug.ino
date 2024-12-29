@@ -10,6 +10,8 @@ void setup()
 {
   int found;
   Serial.begin(115200);
+ 
+  kasaUtil.SetDebug(true);
 
   // connect to WiFi
   Serial.printf("Connecting to %s ", ssid);
@@ -30,7 +32,7 @@ void setup()
     KASASmartPlug *p = kasaUtil.GetSmartPlugByIndex(i);
     if (p != NULL)
     {
-      Serial.printf("\r\n %d. %s IP: %s Relay: %d", i, p->alias, p->ip_address, p->state);
+      Serial.printf("\r\n %d. %s IP: %s Relay: %d", i, p->alias, p->ip_address, p->mac, p->state);
     }
   }
   KASASmartPlug *testPlug = kasaUtil.GetSmartPlug("Test1");
