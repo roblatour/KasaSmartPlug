@@ -7,9 +7,10 @@
  
  This library is also released under the MIT License as well.
 
- It includes the ablitity to report on the Kasa device's MAC.
- It includes the abilty to report processing to the Serial Output window
- 
+ This fork incrementatlly includes the ablitity to report 
+ - on Kasa KS and KP devices
+ - the Kasa device's MAC
+ - to the Serial Output window
  
  # Dependencie
  This library requires ArduinoJson by Benoit Blanchon. 
@@ -31,6 +32,8 @@
      {
       int found;
       Serial.begin(115200);
+
+      kasaUtil.SetDebug(true);
 
       // connect to WiFi
       Serial.printf("Connecting to %s ", ssid);
