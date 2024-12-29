@@ -3,16 +3,18 @@
  You can control the TP Link Smart Plugs and Light Switches. Please make sure you ESP32 is on the same
  WIFI network as your TP Link Smart Plug devices.
  
- This library:
+ This library is a fork of the library https://github.com/kj831ca/KasaSmartPlug developed by Kris Jearkul (released under the MIT License); the fork was made December 29, 2024.
  
-  - is a fork of the library https://github.com/kj831ca/KasaSmartPlug developed by Kris Jearkul (released under the MIT License); the fork was create on December 29, 2024.
-  - is released under the MIT License
-  - incrementally includes support for reporting:
-    - on Kasa KS230 and KP400 devices
-	- on the Kasa devices's MAC Ids
-    - processing to the Serial Output window
-	 
- # Dependencie
+ This library is also released under the MIT License as well.
+
+ This fork incrementatlly includes the ablitity to report:
+ - on Kasa KS and KP devices (*)
+ - the Kasa device's MAC Id
+ - to the Serial Output window
+
+ (*) this library has been tested with a Kasa KP400 device - which is a one unit with two plugs - accessable at via one IP address and with on MAC id. This library will will report the (default) name of the unit, but not the name of two seperate plugs if they have been individually named via the Kasa Phone App.  Sadly, the Kasa Phone App appears not to allow you to change the unit's default name. In any case, this library will report the KP400's default name, model, IP address, MAC Id and will report its state as off even if one or both plugs are on.
+ 
+ # Dependencies
  This library requires ArduinoJson by Benoit Blanchon. 
  https://arduinojson.org/?utm_source=meta&utm_medium=library.properties
  Please make sure you install ArduinoJson to your Arduino IDE.
@@ -32,6 +34,8 @@
      {
       int found;
       Serial.begin(115200);
+
+      kasaUtil.SetDebug(true);
 
       // connect to WiFi
       Serial.printf("Connecting to %s ", ssid);
