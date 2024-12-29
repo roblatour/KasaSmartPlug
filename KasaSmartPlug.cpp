@@ -3,11 +3,19 @@
 // I felt better after couple days of rest but still tested positive and
 // could not go to work. I feel bored so I started writing this library.
 
+bool Kasa_Debug = false;
+
 #include "KasaSmartPlug.hpp"
 
 const char *KASAUtil::get_kasa_info = "{\"system\":{\"get_sysinfo\":null}}";
 const char *KASAUtil::relay_on = "{\"system\":{\"set_relay_state\":{\"state\":1}}}";
 const char *KASAUtil::relay_off = "{\"system\":{\"set_relay_state\":{\"state\":0}}}";
+
+void KASAUtil::SetDebug(bool DebugOn) {
+	
+	Kasa_Debug = DebugOn;
+	
+}
 
 uint16_t KASAUtil::Encrypt(const char *data, int length, uint8_t addLengthByte, char *encryped_data)
 {
@@ -62,7 +70,7 @@ KASAUtil::KASAUtil()
     deviceFound = 0;
 }
 
-int KASAUtil::ScanDevices(int timeoutMs)
+int KASAUtil::ScanDevices(int timeoutMs, String ipAddress)
 {
     struct sockaddr_in dest_addr;
     int ret = 0;
@@ -76,14 +84,15 @@ int KASAUtil::ScanDevices(int timeoutMs)
     int len;
     const char *string_value;
     const char *model;
+	const char *mac;
     int relay_state;
 
-    StaticJsonDocument<512> doc;
+    StaticJsonDocument<1024> doc; 
 
     len = strlen(get_kasa_info);
 
-    dest_addr.sin_addr.s_addr = inet_addr("255.255.255.255");
-    dest_addr.sin_family = AF_INET;
+	dest_addr.sin_addr.s_addr = inet_addr(ipAddress.c_str());
+	dest_addr.sin_family = AF_INET;
     dest_addr.sin_port = htons(9999);
 
     //Clean up the previous resource
@@ -94,9 +103,8 @@ int KASAUtil::ScanDevices(int timeoutMs)
             delete(ptr_plugs[i]);
         }
     }
-    deviceFound = 0; //Reset all device..
+    deviceFound = 0; //Reset all devices..
     
-
     sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 
     if (sock < 0)
@@ -136,12 +144,13 @@ int KASAUtil::ScanDevices(int timeoutMs)
         closeSock(sock);
         return -4;
     }
-    Serial.println("Query Message sent");
+    
+    if (Kasa_Debug) {Serial.println("Query Message sent");  };
+	
     int send_loop = 0;
-    long time_out_us = (long)timeoutMs * 1000;
+    long time_out_us = (long)timeoutMs * 1000; 
     while ((err > 0) && (send_loop < 1))
     {
-
         struct timeval tv = {
             .tv_sec = 0,
             .tv_usec = time_out_us,
@@ -149,10 +158,12 @@ int KASAUtil::ScanDevices(int timeoutMs)
         fd_set rfds;
         FD_ZERO(&rfds);
         FD_SET(sock, &rfds);
-        Serial.println("Enter select function...");
+		
+        if(Kasa_Debug) { Serial.println("Enter select function..."); };
 
         int s = select(sock + 1, &rfds, NULL, NULL, &tv);
-        Serial.printf("Select value = %d\n", s);
+		
+        if (Kasa_Debug) { Serial.printf("Select value = %d\n", s);};
 
         if (s < 0)
         {
@@ -165,12 +176,13 @@ int KASAUtil::ScanDevices(int timeoutMs)
             if (FD_ISSET(sock, &rfds))
             {
                 // Incoming datagram received
-                char recvbuf[1024];
+                char recvbuf[2048];  // 1024
                 char raddr_name[32] = {0};
 
                 struct sockaddr_storage raddr; // Large enough for both IPv4 or IPv6
                 socklen_t socklen = sizeof(raddr);
-                Serial.println("Waiting incomming package...");
+				
+                if (Kasa_Debug) {Serial.println("Waiting incomming package...");  };
                 int len = recvfrom(sock, recvbuf, sizeof(recvbuf) - 1, 0,
                                    (struct sockaddr *)&raddr, &socklen);
                 if (len < 0)
@@ -190,7 +202,7 @@ int KASAUtil::ScanDevices(int timeoutMs)
                                 raddr_name, sizeof(raddr_name) - 1);
                 }
 
-                Serial.printf("received %d bytes from %s: \r\n", len, raddr_name);
+                if (Kasa_Debug) {Serial.printf("received %d bytes from %s: \r\n", len, raddr_name);  };
 
                 recvbuf[len] = 0; // Null-terminate whatever we received and treat like a string...
 
@@ -198,11 +210,14 @@ int KASAUtil::ScanDevices(int timeoutMs)
                 // I found HS103 plug would response around 500 to 700 bytes of JSON data
                 if (len > 500)
                 {
-                    Serial.println("Parsing info...");
+                    if (Kasa_Debug) {Serial.println("Parsing info...");  };
                     DeserializationError error = deserializeJson(doc, recvbuf, len);
 
                     if (error)
                     {
+						Serial.println("");
+						Serial.print(ipAddress);
+						Serial.print(" ");
                         Serial.print("deserializeJson() failed: ");
                         Serial.println(error.c_str());
                     }
@@ -212,37 +227,42 @@ int KASAUtil::ScanDevices(int timeoutMs)
                         string_value = get_sysinfo["alias"];
                         relay_state = get_sysinfo["relay_state"];
                         model = get_sysinfo["model"];
+						mac = get_sysinfo["mac"];
 
-                        if (!IsStartWith("HS",model) && !IsStartWith("KP",model))
+                        if ( IsStartWith("HS",model) || IsStartWith("KS",model) )
                         {
-                            Serial.println("Found a valid Kasa Device, but we don't know if it works with this library just yet. You are in unprecedented territory, proceed with caution.");    
-                        }
-                        
-                        // Limit the number of devices and make sure no duplicate device.
-                        if (IsContainPlug(string_value) == -1)
-                        {
-                            // New device has been found
-                            if (deviceFound < MAX_PLUG_ALLOW)
+                            // Limit the number of devices and make sure no duplicate device.
+                            if (IsContainPlug(string_value) == -1)
                             {
-                                ptr_plugs[deviceFound] = new KASASmartPlug(string_value, raddr_name);
-                                ptr_plugs[deviceFound]->state = relay_state;
-                                strcpy(ptr_plugs[deviceFound]->model, model);
-                                deviceFound++;
-                            } else 
+                                // New device has been found
+                                if (deviceFound < MAX_PLUG_ALLOW)
+                                {
+                                    ptr_plugs[deviceFound] = new KASASmartPlug(string_value, raddr_name);
+                                    ptr_plugs[deviceFound]->state = relay_state;
+                                    strcpy(ptr_plugs[deviceFound]->model, model);
+									strcpy(ptr_plugs[deviceFound]->mac, mac);
+                                    deviceFound++;
+                                } else 
+                                {
+                                    Serial.printf("\r\n Error unable to add more plug");
+                                }
+                            }else 
                             {
-                                Serial.printf("\r\n Error unable to add more plug");
+                                //Plug is already in the collection then update IP Address..
+                                KASASmartPlug *plug = KASAUtil::GetSmartPlug(string_value);
+                                if(plug != NULL)
+                                {
+                                    plug->UpdateIPAddress(raddr_name);
+                                }
                             }
-                        }else 
-                        {
-                            //Plug is already in the collection then update IP Address..
-                            KASASmartPlug *plug = KASAUtil::GetSmartPlug(string_value);
-                            if(plug != NULL)
-                            {
-                                plug->UpdateIPAddress(raddr_name);
-                            }
-                        }
-                        
-                    }
+				     	} else {
+						
+						Serial.println();
+						Serial.print("Unsupported model: ");
+						Serial.println(model);
+											
+					    }
+					}
                 }
             }
             else
@@ -250,7 +270,7 @@ int KASAUtil::ScanDevices(int timeoutMs)
 
                 // int len = snprintf(sendbuf, sizeof(sendbuf), sendfmt, send_count++);
 
-                Serial.println("Send Query Message");
+                if (Kasa_Debug) {Serial.println("Send Query Message");  };
 
                 err = sendto(sock, sendbuf, len, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
                 if (err < 0)
@@ -258,12 +278,12 @@ int KASAUtil::ScanDevices(int timeoutMs)
                     ESP_LOGE(TAG, "Error occurred during sending: errno %d", errno);
                     retValue = -5;
                 }
-                Serial.println("Query Message sent");
+                if (Kasa_Debug) {Serial.println("Query Message sent");  };
             }
         }
         else if (s == 0) // Timeout package
         {
-            Serial.println("S Timeout Send Query Message");
+            if (Kasa_Debug) {Serial.println("S Timeout Send Query Message");  };
             send_loop++;
 
             err = sendto(sock, sendbuf, len, 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
@@ -274,7 +294,7 @@ int KASAUtil::ScanDevices(int timeoutMs)
                 closeSock(sock);
                 return retValue;
             }
-            Serial.println("Query Message sent");
+            if (Kasa_Debug) { Serial.println("Query Message sent");  };
         }
 
         vTaskDelay(300 / portTICK_PERIOD_MS);
@@ -418,14 +438,14 @@ int KASASmartPlug::QueryInfo()
     if (recvLen > 500)
     {
 
-        // Serial.println("Parsing info...");
+        if (Kasa_Debug) {Serial.println("Parsing info...");  };
         // Because the StaticJSONDoc uses quite memory block other plug while parsing JSON ...
         xSemaphoreTake(mutex, portMAX_DELAY);
         DeserializationError error = deserializeJson(doc, buffer, recvLen);
 
         if (error)
         {
-            Serial.print("deserializeJson() failed: ");
+            Serial.print("deserializeJson() failed: ");  
             Serial.println(error.c_str());
             recvLen = -1;
         }
@@ -435,7 +455,14 @@ int KASASmartPlug::QueryInfo()
             state = get_sysinfo["relay_state"];
             err_code = get_sysinfo["err_code"];
             strcpy(alias,get_sysinfo["alias"]);
-            Serial.printf("\r\n Relay state: %d Error Code %d", state, err_code);
+            if (Kasa_Debug) {Serial.printf("\r\n Relay state: %d Error Code %d", state, err_code); };
+			
+			
+			// added this to see more specifically what information is available
+		     char buffer[2048];
+    	     serializeJsonPretty(get_sysinfo, buffer);
+		     Serial.println(buffer);
+    
         }
         xSemaphoreGive(mutex);
     }
