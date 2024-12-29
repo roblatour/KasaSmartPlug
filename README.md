@@ -9,7 +9,7 @@
 
  This fork incrementatlly includes the ablitity to report:
  - on Kasa KS and KP devices
- - the Kasa device's MAC
+ - the Kasa device's MAC Id
  - to the Serial Output window
  
  # Dependencie
