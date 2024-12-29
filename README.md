@@ -3,7 +3,13 @@
  You can control the TP Link Smart Plugs and Light Switches. Please make sure you ESP32 is on the same
  WIFI network as your TP Link Smart Plug devices.
  
- So far I tested the library with TP Link Smart Plug model HS103(US) and HS200(US).
+ This library is a fork of the library https://github.com/kj831ca/KasaSmartPlug developed by Kris Jearkul (released under the MIT License); the fork was made December 29, 2024.
+ 
+ This library is also released under the MIT License as well.
+
+ It includes the ablitity to report on the Kasa device's MAC.
+ It includes the abilty to report processing to the Serial Output window
+ 
  
  # Dependencie
  This library requires ArduinoJson by Benoit Blanchon. 
@@ -43,7 +49,7 @@
       for (int i = 0; i < found; i++)
       {
         KASASmartPlug *p = kasaUtil.GetSmartPlugByIndex(i);
-        Serial.printf("\r\n %d. %s IP: %s Relay: %d", i, p->alias, p->ip_address, p->state);  
+        Serial.printf("\r\n %d. %s IP: %s Relay: %d", i, p->alias, p->ip_address, p->mac, p->state);  
       } 
      }
      
@@ -67,6 +73,9 @@
  ~~~
  
  # Credit
+
+ Thanks to Kris Jearkul for the library from which this one was forked ( https://github.com/kj831ca/KasaSmartPlug ).
+  
  Thanks for the infomation from https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/
  without this, it will be impossible for me to complete this library.
  
