@@ -3,14 +3,15 @@
  You can control the TP Link Smart Plugs and Light Switches. Please make sure you ESP32 is on the same
  WIFI network as your TP Link Smart Plug devices.
  
- This library is a fork of the library https://github.com/kj831ca/KasaSmartPlug developed by Kris Jearkul (released under the MIT License); the fork was made December 29, 2024.
+ This library:
  
- This library is also released under the MIT License as well.
-
- It includes the ablitity to report on the Kasa device's MAC.
- It includes the abilty to report processing to the Serial Output window
- 
- 
+  - is a fork of the library https://github.com/kj831ca/KasaSmartPlug developed by Kris Jearkul (released under the MIT License); the fork was create on December 29, 2024.
+  - is released under the MIT License
+  - incrementally includes support for reporting:
+    - on Kasa KS230 and KP400 devices
+	- on the Kasa devices's MAC Ids
+    - processing to the Serial Output window
+	 
  # Dependencie
  This library requires ArduinoJson by Benoit Blanchon. 
  https://arduinojson.org/?utm_source=meta&utm_medium=library.properties

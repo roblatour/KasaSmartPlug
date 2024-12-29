@@ -236,7 +236,7 @@ int KASAUtil::ScanDevices(int timeoutMs, String ipAddress)
                         model = get_sysinfo["model"];
 						mac = get_sysinfo["mac"];
 
-                        if ( IsStartWith("HS",model) || IsStartWith("KS",model) )
+                        if ( IsStartWith("HS",model) || IsStartWith("KS",model) || IsStartWith("KP",model) )
                         {
                             // Limit the number of devices and make sure no duplicate device.
                             if (IsContainPlug(string_value) == -1)
