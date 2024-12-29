@@ -7,12 +7,12 @@
  
  This library is also released under the MIT License as well.
 
- This fork incrementatlly includes the ablitity to report:
+ This fork incrementally includes the ability to report:
  - on Kasa KS and KP devices (*)
  - the Kasa device's MAC Id
  - to the Serial Output window
 
- (*) this library has been tested with a Kasa KP400 device - which is a one unit with two plugs - accessable at via one IP address and with on MAC id. This library will will report the (default) name of the unit, but not the name of two seperate plugs if they have been individually named via the Kasa Phone App.  Sadly, the Kasa Phone App appears not to allow you to change the unit's default name. In any case, this library will report the KP400's default name, model, IP address, MAC Id and will report its state as off even if one or both plugs are on.
+ (*) this library has been tested with a Kasa KP400 device - which is a one unit with two plugs - accessible at via one IP address and with on MAC id. This library will will report the (default) name of the unit, but not the name of two separate plugs if they have been individually named via the Kasa Phone App.  Sadly, the Kasa Phone App appears not to allow you to change the unit's default name. In any case, this library will report the KP400's default name, model, IP address, MAC Id and will report its state as off even if one or both plugs are on.
  
  # Dependencies
  This library requires ArduinoJson by Benoit Blanchon. 
@@ -73,7 +73,7 @@
  //Turn OFF the plug
  testPlug->SetRelayState(0);
  
- //Read the plug infomation and relay state
+ //Read the plug information and relay state
  testPlug->QueryInfo();
  ~~~
  
@@ -81,7 +81,7 @@
 
  Thanks to Kris Jearkul for the library from which this one was forked ( https://github.com/kj831ca/KasaSmartPlug ).
   
- Thanks for the infomation from https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/
+ Thanks for the information from https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/
  without this, it will be impossible for me to complete this library.
  
  Very well written library ArduinoJson by Benoit Blanchon. https://arduinojson.org/?utm_source=meta&utm_medium=library.properties 
