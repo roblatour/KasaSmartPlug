@@ -12,7 +12,7 @@ https://github.com/kj831ca/KasaSmartPlug
 
 bool Kasa_Debug = false;
 
-#include "KasaSmartPlug.hpp"
+#include "KasaSmartPlug.h"
 
 const char *KASAUtil::get_kasa_info = "{\"system\":{\"get_sysinfo\":null}}";
 const char *KASAUtil::relay_on = "{\"system\":{\"set_relay_state\":{\"state\":1}}}";
