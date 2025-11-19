@@ -1,5 +1,5 @@
 # Arduino Library for ESP32 to control TP Link Kasa Smart Plug (Local Network mode)
- This library will allow ESP32 to scan the TP Link Kasa smart plug and Light Switch on the local network.
+ This library will allow an ESP32 to scan the TP Link Kasa smart plugs and Light Switchs on the local network.
  You can control the TP Link Smart Plugs and Light Switches. Please make sure you ESP32 is on the same
  WIFI network as your TP Link Smart Plug devices.
  
@@ -82,7 +82,7 @@
  Thanks to Kris Jearkul for the library from which this one was forked ( https://github.com/kj831ca/KasaSmartPlug ).
   
  Thanks for the information from https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/
- without this, it will be impossible for me to complete this library.
+ without this, it would have been impossible for me to complete this library.
  
  Very well written library ArduinoJson by Benoit Blanchon. https://arduinojson.org/?utm_source=meta&utm_medium=library.properties 
  
